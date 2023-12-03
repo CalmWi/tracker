@@ -11,8 +11,7 @@ import java.util.Objects;
 @Data
 public class SecurityUser implements UserDetails {
     private static final long serialVersionUID = 1L;
-    private String name;
-    private String password;
+    private User user;
     private Collection<? extends GrantedAuthority> authorities;
 
     @Override
@@ -20,21 +19,19 @@ public class SecurityUser implements UserDetails {
         return authorities;
     }
 
-    public SecurityUser(String username, String password,
-                        Collection<? extends GrantedAuthority> authorities) {
-        this.name = username;
-        this.password = password;
+    public SecurityUser(User user, Collection<? extends GrantedAuthority> authorities) {
+        this.user = user;
         this.authorities = authorities;
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return name;
+        return user.getEmail();
     }
 
     @Override
@@ -63,12 +60,11 @@ public class SecurityUser implements UserDetails {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        SecurityUser user = (SecurityUser) o;
-        return Objects.equals(name, user.name);
+        SecurityUser securityUser = (SecurityUser) o;
+        return Objects.equals(user.getEmail(), securityUser.getUser().getEmail());
     }
 
     public static SecurityUser fromUser(User user) {
-        return new SecurityUser(
-                user.getEmail(), user.getPassword(), user.getRole().getAuthorities());
+        return new SecurityUser(user, user.getRole().getAuthorities());
     }
 }

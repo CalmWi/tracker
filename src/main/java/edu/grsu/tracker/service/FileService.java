@@ -29,13 +29,15 @@ public class FileService {
         metadata.put("fileSize", upload.getSize());
         metadata.put("issueId", issueId);
 
-        Object fileID = template.store(upload.getInputStream(), upload.getOriginalFilename(), upload.getContentType(), metadata);
+        Object fileID = template.store(upload.getInputStream(),
+                upload.getOriginalFilename(), upload.getContentType(), metadata);
 
         return fileID.toString();
     }
 
     public LoadFile downloadFile(final Long id) throws IOException {
-        GridFSFile gridFSFile = template.findOne(new Query(Criteria.where("metadata.issueId").is(id)));
+        GridFSFile gridFSFile = template.findOne(
+                new Query(Criteria.where("metadata.issueId").is(id)));
 
         if (gridFSFile == null) {
             throw new TrackerExceptoin("File not found");

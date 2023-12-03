@@ -1,13 +1,16 @@
 package edu.grsu.tracker.service;
 
 import edu.grsu.tracker.exception.TrackerExceptoin;
+import edu.grsu.tracker.storage.entity.History;
 import edu.grsu.tracker.storage.entity.Issue;
 import edu.grsu.tracker.storage.entity.Task;
 import edu.grsu.tracker.storage.repo.IssueRepo;
+import edu.grsu.tracker.utils.CurrentUserHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -30,7 +33,15 @@ public class IssueService {
         return issueRepo.findAllByUserId(userId);
     }
 
+    @Transactional
     public Issue save(final Issue issue) {
+        History history = History.builder()
+                .updateDate(LocalDate.now())
+                .issue(issue)
+                .user(CurrentUserHolder.getCurrentUser())
+                .changes("Created")
+                .build();
+        issue.setHistory(history);
         return issueRepo.save(issue);
     }
 
@@ -45,6 +56,13 @@ public class IssueService {
         get.setStartDate(issue.getStartDate());
         get.setStatus(issue.getStatus());
         get.setType(issue.getType());
+        History history = History.builder()
+                .updateDate(LocalDate.now())
+                .issue(issue)
+                .user(CurrentUserHolder.getCurrentUser())
+                .changes("Updated")
+                .build();
+        get.setHistory(history);
         return issueRepo.save(get);
     }
 

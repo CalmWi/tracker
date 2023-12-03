@@ -1,4 +1,4 @@
-package edu.grsu.tracker.config;
+package edu.grsu.tracker.config.properties;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

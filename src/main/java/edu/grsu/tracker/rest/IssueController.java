@@ -2,6 +2,7 @@ package edu.grsu.tracker.rest;
 
 import edu.grsu.tracker.api.rq.issue.IssueRq;
 import edu.grsu.tracker.api.rq.task.TaskRq;
+import edu.grsu.tracker.model.IssueModel;
 import edu.grsu.tracker.rest.mapper.IssueMapper;
 import edu.grsu.tracker.rest.mapper.TaskMapper;
 import edu.grsu.tracker.service.FileService;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,60 +24,65 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "Issues")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/issues")
 public class IssueController {
-
     private final IssueService issueService;
     private final TaskMapper taskMapper;
     private final IssueMapper issueMapper;
     private final FileService fileService;
+    private final ModelMapper modelMapper;
 
     @Operation(description = "Get all 'Issues'.")
     @GetMapping(value = "")
-    public ResponseEntity<List<Issue>> getIssues() {
-        List<Issue> issueList = issueService.getIssues();
+    public ResponseEntity<List<IssueModel>> getIssues() {
+        List<IssueModel> issueList = issueService.getIssues().stream()
+                .map(issue -> modelMapper.map(issue, IssueModel.class))
+                .collect(Collectors.toList());
         return ResponseEntity.ok(issueList);
     }
 
     @Operation(description = "Get 'Issue' by id.")
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Issue> getIssue(@Parameter(description = "Issue ID", required = true)
-                                          @PathVariable("id") Long id) {
+    public ResponseEntity<IssueModel> getIssue(@Parameter(description = "Issue ID", required = true)
+                                               @PathVariable("id") Long id) {
         Issue issue = issueService.getIssue(id);
-        return ResponseEntity.ok(issue);
+        return ResponseEntity.ok(modelMapper.map(issue, IssueModel.class));
     }
 
     @Operation(description = "Get assigned 'Issues' by user id.")
     @GetMapping(value = "/assigned/{id}")
-    public ResponseEntity<List<Issue>> getAssignedIssues(@Parameter(description = "User ID", required = true)
-                                                         @PathVariable("id") Long id) {
-        List<Issue> issues = issueService.getAssignedIssues(id);
+    public ResponseEntity<List<IssueModel>> getAssignedIssues(@Parameter(description = "User ID", required = true)
+                                                              @PathVariable("id") Long id) {
+        List<IssueModel> issues = issueService.getAssignedIssues(id).stream()
+                .map(issue -> modelMapper.map(issue, IssueModel.class))
+                .collect(Collectors.toList());
         return ResponseEntity.ok(issues);
     }
 
     @Operation(description = "Add 'Task' to the 'Issue'.")
     @PostMapping(value = "/add/task/{issueId}")
-    public ResponseEntity<Issue> addTaskToIssue(@Parameter(description = "Issue ID", required = true)
-                                                @PathVariable("issueId") final Long issueId,
-                                                @RequestBody TaskRq rq) {
+    public ResponseEntity<IssueModel> addTaskToIssue(@Parameter(description = "Issue ID", required = true)
+                                                     @PathVariable("issueId") final Long issueId,
+                                                     @RequestBody TaskRq rq) {
 
         Issue added = issueService.addTaskToIssue(issueId, taskMapper.toItem(rq));
-        return ResponseEntity.ok().body(added);
+        return ResponseEntity.ok().body(modelMapper.map(added, IssueModel.class));
     }
 
     @Operation(description = "Update 'Issue'.")
     @PutMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('member') && @permissionCheck.checkIssueDate(#id)")
-    public ResponseEntity<Issue> updateIssue(@Parameter(description = "Issue ID", required = true)
-                                             @PathVariable("id") final Long id,
-                                             @RequestBody IssueRq rq) {
+    public ResponseEntity<IssueModel> updateIssue(@Parameter(description = "Issue ID", required = true)
+                                                  @PathVariable("id") final Long id,
+                                                  @RequestBody IssueRq rq) {
 
         Issue update = issueService.update(id, issueMapper.toItem(rq));
-        return ResponseEntity.ok().body(update);
+        return ResponseEntity.ok().body(modelMapper.map(update, IssueModel.class));
     }
 
     @Operation(description = "Delete 'Issue' by id.")

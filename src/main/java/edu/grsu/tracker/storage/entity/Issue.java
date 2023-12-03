@@ -62,4 +62,8 @@ public class Issue {
     @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Task> tasks;
+
+    @OneToOne(mappedBy = "issue", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private History history;
 }

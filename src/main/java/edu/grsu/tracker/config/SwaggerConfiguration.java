@@ -1,5 +1,6 @@
 package edu.grsu.tracker.config;
 
+import edu.grsu.tracker.config.properties.SwaggerProperties;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

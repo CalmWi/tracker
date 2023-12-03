@@ -14,7 +14,6 @@ import java.util.Map;
 
 @ControllerAdvice
 @RequiredArgsConstructor
-
 public class TrackerExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String TIMESTAMP = "timestamp";
     private static final String PATH = "path";

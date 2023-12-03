@@ -1,10 +1,12 @@
 package edu.grsu.tracker.storage.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.grsu.tracker.storage.common.user.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -42,8 +44,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private Set<Project> projects;
 
-    public void addProject(Project project) {
-        this.projects.add(project);
-        project.getMembers().add(this);
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<History> histories;
 }
