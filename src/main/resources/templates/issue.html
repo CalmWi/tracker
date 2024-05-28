@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/style.css">
+  <style>
+    .nav-before{}
+    .nav-before::before {
+      position:absolute;
+      height: 2px;
+      width: 100%;
+      background: #e7ebf2;
+      content: "";
+      top: 70px;
+    }
+
+    .a-hover{
+      color: rgba(var(--bs-secondary-rgb), var(--bs-text-opacity));
+    }
+    .a-hover:hover{
+      color: white;
+    }
+  </style>
+</head>
+<body class="bg-light">
+<header th:insert="header::header"></header>
+<div class="d-flex flex-column p-5">
+  <div class="container d-flex flex-row">
+    <label class="form-label fs-3 fw-bold" th:text="'Задача #' + ${issue.getId()} +' '+ ${issue.getName()}"></label>
+  </div>
+  <div class="container d-flex flex-column border">
+    <div class="d-flex flex-row">
+      <label class="form-label fw-bold p-2">Статус:</label>
+      <label class="form-label p-2" th:text="${issue.getStatus()}"></label>
+    </div>
+    <div class="d-flex flex-row">
+      <label class="form-label fw-bold p-2">Приоритет:</label>
+      <label class="form-label p-2" th:text="${issue.getPriority()}"></label>
+    </div>
+    <div class="d-flex flex-row">
+      <label class="form-label fw-bold p-2">Исполнитель:</label>
+      <label class="form-label p-2" th:text="${issue.getAssigned().getName()}"></label>
+    </div>
+    <div class="d-flex flex-row">
+      <label class="form-label fw-bold p-2">Начало:</label>
+      <label class="form-label p-2" th:text="${issue.getStartDate()}"></label>
+    </div>
+    <div class="d-flex p-2" th:text="${issue.getDescription()}"/>
+  </div>
+  <div class="container d-flex flex-column">
+    <div><label class="form-label fw-bold p-2">История изменений</label></div>
+
+  </div>
+</div>
+<div th:insert="subfooter::subfooter"></div>
+<div th:insert="footer::footer"></div>
+</body>
+</html>

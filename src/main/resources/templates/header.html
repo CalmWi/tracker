@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+<header th:fragment="header">
+    <div class="py-2 bg-dark">
+        <div class="container">
+            <div class="container d-flex flex-wrap row">
+                <nav class="nav fs-3 col-6 justify-content-center align-items-center">
+                    <div class="container d-flex flex-wrap">
+                        <a href="/" class="d-flex align-items-center text-decoration-none text-info">
+                            <div class="p-3 fw-bolder">TimeTracker</div>
+                        </a>
+                    </div>
+                </nav>
+                <nav class="navbar fs-3 col-6 justify-content-end align-items-center">
+                    <div class="d-flex flex-row">
+                        <div class="container d-flex"><a href="/account" class="nav-link text-info fs-4">Профиль</a>
+                        </div>
+                        <div class="container d-flex">
+                            <form action="/auth/signout" method="post">
+                                <button class="text-secondary nav-link text-info fs-4" style="border: none; background: none; " type="submit">Выйти</button>
+                            </form>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="py-1 bg-info text-dark">
+        <div class="container">
+            <div class="d-flex flex-wrap">
+                <ul class="nav text-small">
+                    <li><a href="/report" class="nav-link a-hover ">Рабочий стол</a></li>
+                    <li><a href="/projects" class="nav-link a-hover ">Проекты</a></li>
+                    <li><a href="/issues/assigned" class="nav-link a-hover ">Задачи</a></li>
+                    <li><a sec:authorize="hasAuthority('write')" href="/projects/all" class="nav-link a-hover ">Все проекты</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+</body>
+</html>
