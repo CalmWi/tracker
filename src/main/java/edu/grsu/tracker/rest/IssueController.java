@@ -19,6 +19,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Tag(name = "Issues")
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/issues")
 public class IssueController {
@@ -48,20 +50,21 @@ public class IssueController {
 
     @Operation(description = "Get 'Issue' by id.")
     @GetMapping(value = "/{id}")
-    public ResponseEntity<IssueModel> getIssue(@Parameter(description = "Issue ID", required = true)
-                                               @PathVariable("id") Long id) {
+    public String getIssue(@Parameter(description = "Issue ID", required = true)
+                                               @PathVariable("id") Long id, Model model) {
         Issue issue = issueService.getIssue(id);
-        return ResponseEntity.ok(modelMapper.map(issue, IssueModel.class));
+        model.addAttribute("issue", modelMapper.map(issue, IssueModel.class));
+        return "issue";
     }
 
     @Operation(description = "Get assigned 'Issues' by user id.")
-    @GetMapping(value = "/assigned/{id}")
-    public ResponseEntity<List<IssueModel>> getAssignedIssues(@Parameter(description = "User ID", required = true)
-                                                              @PathVariable("id") Long id) {
-        List<IssueModel> issues = issueService.getAssignedIssues(id).stream()
+    @GetMapping(value = "/assigned")
+    public String getAssignedIssues(@RequestAttribute("userId") Long userId, Model model) {
+        List<IssueModel> issues = issueService.getAssignedIssues(userId).stream()
                 .map(issue -> modelMapper.map(issue, IssueModel.class))
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(issues);
+        model.addAttribute("issues", issues);
+        return "issues";
     }
 
     @Operation(description = "Add 'Task' to the 'Issue'.")

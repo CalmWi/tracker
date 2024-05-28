@@ -16,6 +16,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Tag(name = "Projects")
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/projects")
 public class ProjectController {
@@ -33,22 +35,34 @@ public class ProjectController {
     private final ModelMapper mapper;
 
     @Operation(description = "Get all 'Projects'. ")
-    @GetMapping(value = "")
+    @GetMapping(value = "/all")
     @PreAuthorize("hasAuthority('write')")
-    public ResponseEntity<List<ProjectModel>> getProjects() {
+    public ResponseEntity<List<ProjectModel>> getAllProjects() {
         List<ProjectModel> projectList = projectService.getProjects().stream()
                 .map(project -> mapper.map(project, ProjectModel.class))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(projectList);
     }
 
+    @Operation(description = "Get user 'Projects' by user_id ")
+    @GetMapping(value = "")
+    @PreAuthorize("hasAuthority('member')")
+    public String getProjects(@RequestAttribute("userId") Long userId, Model model) {
+        List<ProjectModel> projectModels = projectService.getUserProjects(userId).stream()
+                .map(project -> mapper.map(project, ProjectModel.class))
+                .collect(Collectors.toList());
+        model.addAttribute("projects", projectModels);
+        return "projects";
+    }
+
     @Operation(description = "Get 'Project' by id.")
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('member')")
-    public ResponseEntity<ProjectModel> getProject(@Parameter(description = "Project ID", required = true)
-                                                   @PathVariable("id") final Long id) {
+    public String getProject(@Parameter(description = "Project ID", required = true)
+                                                   @PathVariable("id") final Long id, Model model) {
         Project project = projectService.getProject(id);
-        return ResponseEntity.ok(mapper.map(project, ProjectModel.class));
+        model.addAttribute("project", mapper.map(project, ProjectModel.class));
+        return "project";
     }
 
     @Operation(description = "Get user 'Projects' by id.")
