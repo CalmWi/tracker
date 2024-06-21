@@ -1,6 +1,6 @@
 package edu.grsu.tracker.service;
 
-import edu.grsu.tracker.exception.TrackerExceptoin;
+import edu.grsu.tracker.controller.exception.TrackerExceptoin;
 import edu.grsu.tracker.storage.entity.Task;
 import edu.grsu.tracker.storage.repo.TaskRepo;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,14 @@ public class TaskService {
 
     public List<Task> getTasks() {
         return taskRepo.findAll();
+    }
+
+    public List<Task> getLogTasks(final Integer month, final Integer year, final Long userId) {
+        return taskRepo.findAllForMonthAndYear(month, year, userId);
+    }
+
+    public List<Task> getTasksByIssue(final Long issueId) {
+        return taskRepo.findAllByIssueId(issueId);
     }
 
     public Task save(final Task task) {

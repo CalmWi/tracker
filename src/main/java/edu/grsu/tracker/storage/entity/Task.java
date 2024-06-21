@@ -28,6 +28,10 @@ public class Task {
 
     private LocalDate createOn;
 
+    private Long userId;
+
+    private String userFio;
+
     @ManyToOne
     @JoinColumn(name = "issue_id")
     @JsonBackReference

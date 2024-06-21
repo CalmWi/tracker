@@ -3,7 +3,7 @@ package edu.grsu.tracker.service;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
-import edu.grsu.tracker.exception.TrackerExceptoin;
+import edu.grsu.tracker.controller.exception.TrackerExceptoin;
 import edu.grsu.tracker.storage.entity.LoadFile;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,20 +39,38 @@ public class FileService {
         return fileID.toString();
     }
 
-    public LoadFile downloadFile(final Long id) throws IOException {
+    public LoadFile downloadFile(final String id) {
         GridFSFile gridFSFile = template.findOne(
-                new Query(Criteria.where("metadata.issueId").is(id)));
+                new Query(Criteria.where("_id").is(id)));
 
         if (gridFSFile == null) {
             throw new TrackerExceptoin("File not found");
         }
 
-        return LoadFile.builder()
-                .filename(gridFSFile.getFilename())
-                .fileType(gridFSFile.getMetadata().get("_contentType").toString())
-                .fileSize(gridFSFile.getMetadata().get("fileSize").toString())
-                .issueId(Long.valueOf(gridFSFile.getMetadata().get("issueId").toString()))
-                .file(IOUtils.toByteArray(operations.getResource(gridFSFile).getInputStream()))
-                .build();
+        return getLoadFile(gridFSFile);
+    }
+
+    public List<LoadFile> getFilesByIssue(final Long issueId) {
+        ArrayList<GridFSFile> gridFSFiles = template.find(
+                        new Query(Criteria.where("metadata.issueId").is(issueId)))
+                .into(new ArrayList<>());
+
+        return gridFSFiles.stream().map(this::getLoadFile).collect(Collectors.toList());
+    }
+
+    private LoadFile getLoadFile(final GridFSFile gridFSFile) {
+        try {
+            return LoadFile.builder()
+                    .id(gridFSFile.getId().asObjectId().getValue().toHexString())
+                    .filename(gridFSFile.getFilename())
+                    .uploadDate(gridFSFile.getUploadDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                    .fileType(gridFSFile.getMetadata().get("_contentType").toString())
+                    .fileSize(gridFSFile.getMetadata().get("fileSize").toString())
+                    .issueId(Long.valueOf(gridFSFile.getMetadata().get("issueId").toString()))
+                    .file(IOUtils.toByteArray(operations.getResource(gridFSFile).getInputStream()))
+                    .build();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

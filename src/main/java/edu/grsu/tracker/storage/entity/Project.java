@@ -2,6 +2,7 @@ package edu.grsu.tracker.storage.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import edu.grsu.tracker.storage.common.project.ProjectStatus;
 import edu.grsu.tracker.storage.common.project.ProjectType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,6 +29,9 @@ public class Project {
 
     @Enumerated(EnumType.STRING)
     private ProjectType type;
+
+    @Enumerated(EnumType.STRING)
+    private ProjectStatus status;
 
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {

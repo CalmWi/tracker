@@ -30,7 +30,7 @@ public class SecurityConfig {
         http
                 .cors().and().csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/info", "/images/**", "/styles/**").permitAll()
+                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/info", "/images/**", "/static/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin(form -> form.loginPage("/auth/login")

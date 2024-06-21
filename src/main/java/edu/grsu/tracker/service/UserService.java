@@ -1,6 +1,6 @@
 package edu.grsu.tracker.service;
 
-import edu.grsu.tracker.exception.TrackerExceptoin;
+import edu.grsu.tracker.controller.exception.TrackerExceptoin;
 import edu.grsu.tracker.storage.entity.User;
 import edu.grsu.tracker.storage.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,21 @@ public class UserService {
         return userRepo.findAll();
     }
 
+    public List<User> getProjectUsers(final Long projectId) {
+        return userRepo.findAllByProjectId(projectId);
+    }
+
     public User save(final User user) {
         return userRepo.save(user);
+    }
+    public User update(final Long id, User user) {
+        User get = getUser(id);
+        get.setName(user.getName());
+        get.setSurname(user.getSurname());
+        get.setFio(String.format("%s %s", user.getName(), user.getSurname()));
+        get.setEmail(user.getEmail());
+        get.setRole(user.getRole());
+        return userRepo.save(get);
     }
 
     public void delete(final Long id) {

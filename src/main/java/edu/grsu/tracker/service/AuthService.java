@@ -1,6 +1,6 @@
 package edu.grsu.tracker.service;
 
-import edu.grsu.tracker.exception.TrackerExceptoin;
+import edu.grsu.tracker.controller.exception.TrackerExceptoin;
 import edu.grsu.tracker.security.SecurityUser;
 import edu.grsu.tracker.security.jwt.JwtTokenProvider;
 import edu.grsu.tracker.storage.common.user.UserRole;
@@ -22,7 +22,7 @@ public class AuthService {
     public User registerUser(final User user) {
 
         if (userService.emailExists(user.getEmail())) {
-            throw new TrackerExceptoin("There is an account with that email address: "
+            throw new TrackerExceptoin("There is already a user with the same email address: "
                     + user.getEmail());
         }
         user.setRole(UserRole.User);

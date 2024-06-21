@@ -41,10 +41,19 @@ public class Issue {
     @Enumerated(EnumType.STRING)
     private IssueReason reason;
 
+    @OneToOne
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User assigned;
+
+    public User getAssigned() {
+        return assigned;
+    }
+
+    public void setAssigned(User assigned) {
+        this.assigned = assigned;
+    }
 
     @ManyToOne
     @JoinColumn(name = "project_id")
@@ -59,11 +68,15 @@ public class Issue {
 
     private Integer estimatedTime;
 
+    private Integer leftTime;
+
+    private Integer spentTime;
+
     @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Task> tasks;
 
-    @OneToOne(mappedBy = "issue", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private History history;
+    private List<History> histories;
 }

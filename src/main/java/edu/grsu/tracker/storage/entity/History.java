@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,7 +19,7 @@ public class History {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private LocalDate updateDate;
+    private LocalDateTime updateDate;
 
     private String changes;
 
@@ -27,7 +28,7 @@ public class History {
     @JsonBackReference
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "issue_id", referencedColumnName = "id")
     @JsonBackReference
     private Issue issue;

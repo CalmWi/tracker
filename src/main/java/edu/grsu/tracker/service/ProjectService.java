@@ -1,6 +1,7 @@
 package edu.grsu.tracker.service;
 
-import edu.grsu.tracker.exception.TrackerExceptoin;
+import edu.grsu.tracker.controller.exception.TrackerExceptoin;
+import edu.grsu.tracker.storage.common.project.ProjectStatus;
 import edu.grsu.tracker.storage.entity.Issue;
 import edu.grsu.tracker.storage.entity.Project;
 import edu.grsu.tracker.storage.entity.User;
@@ -39,6 +40,7 @@ public class ProjectService {
     }
 
     public Project save(final Project project) {
+        project.setStatus(ProjectStatus.OPEN);
         return projectRepo.save(project);
     }
 
@@ -46,6 +48,7 @@ public class ProjectService {
         Project get = getProject(id);
         get.setName(project.getName());
         get.setType(project.getType());
+        get.setStatus(project.getStatus());
         return projectRepo.save(get);
     }
 
@@ -61,10 +64,7 @@ public class ProjectService {
     public Project addIssueToProject(final Long projectId, final Issue issue, final Long userId) {
         Project project = getProject(projectId);
 
-        User user = userService.getUser(userId);
         project.getIssues().add(issue);
-
-        issue.setAssigned(user);
         issue.setProject(project);
         issueService.save(issue);
 
