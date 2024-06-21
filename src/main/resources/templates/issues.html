@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -9,36 +10,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap"
           rel="stylesheet">
-    <link rel="stylesheet" href="styles/style.css">
-    <style>
-        .nav-before {
-        }
-
-        .nav-before::before {
-            position: absolute;
-            height: 2px;
-            width: 100%;
-            background: #e7ebf2;
-            content: "";
-            top: 70px;
-        }
-
-        .a-hover {
-            color: rgba(var(--bs-secondary-rgb), var(--bs-text-opacity));
-        }
-
-        .a-hover:hover {
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="../../../../../styles/style.css">
 </head>
 <body class="bg-light">
 <header th:insert="header::header"></header>
 <div class="d-flex py-5">
-    <div class="container" th:switch="${issues}">
-        <h2 class="text-primary py-4" th:case="null">No orders yet!</h2>
+    <div class="container" th:switch="${issues.size()}">
+        <h4 class="py-4" th:case="0">На данный момент текущих задач нет</h4>
         <div th:case="*">
-            <h2 class="text-primary py-4">Задачи</h2>
+            <h4 class="py-4">Задачи</h4>
             <table class="table table-bordered">
                 <thead class="table-info">
                 <tr>
@@ -51,7 +31,11 @@
                     <th>Создано</th>
                     <th>Исполнитель</th>
                     <th>Срок исполнения</th>
-                    <th>Оценка</th>
+                    <th>Оценка (часы)</th>
+                    <th>Затраченное время</th>
+                    <th>Оставшееся время</th>
+                    <th sec:authorize="hasAuthority('edit')"></th>
+                    <th sec:authorize="hasAuthority('edit')"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -68,13 +52,22 @@
                     <td th:text="${issue.getAssigned().getName()}"></td>
                     <td th:text="${issue.getDueDate()}"></td>
                     <td th:text="${issue.getEstimatedTime()}"></td>
+                    <td th:text="${issue.getSpentTime()}"></td>
+                    <td th:text="${issue.getLeftTime()}"></td>
+                    <td sec:authorize="hasAuthority('edit')">
+                        <a style="text-decoration: none;"
+                           th:href="@{/issues/edit/{id}(id=${issue.getId()})}">Редактировать</a>
+                    </td>
+                    <td sec:authorize="hasAuthority('edit')">
+                        <a style="text-decoration: none;"
+                           th:href="@{/issues/delete/{id}(id=${issue.getId()})}">Удалить</a>
+                    </td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-<div th:insert="subfooter::subfooter"></div>
 <div th:insert="footer::footer"></div>
 </body>
 </html>

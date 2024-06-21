@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="../../../styles/style.css">
+</head>
+<body class="bg-light">
+<header th:insert="header::header"></header>
+<div class="container justify-content-center align-items-center">
+    <form action="#" th:action="@{/users/update/{id}(id=${userId})}" th:object="${user}" method="post">
+        <div class="d-flex flex-column form-group py-4 has-error">
+            <label for="name" class="col-form-label">Имя пользователя</label>
+            <div class="col-3">
+                <input type="text" class="form-control" th:field="*{name}" id="name">
+                <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+            </div>
+            <label for="name" class="col-form-label">Фамилия пользователя</label>
+            <div class="col-3">
+                <input type="text" class="form-control" th:field="*{surname}" id="surname">
+                <span th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></span>
+            </div>
+            <label for="name" class="col-form-label">Почта пользователя</label>
+            <div class="col-3">
+                <input type="email" class="form-control" th:field="*{email}" id="email">
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+            </div>
+            <label for="name" class="col-form-label">Роль</label>
+            <div class="col-3">
+                <select class="form-control" th:field="*{role}" id="role">
+                    <option value=""> --</option>
+                    <option th:each="userRole : ${roles}" th:value="${userRole.name()}"
+                            th:text="${userRole.name()}"/>
+                </select>
+                <span th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></span>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+    </form>
+</div>
+</body>
+</html>

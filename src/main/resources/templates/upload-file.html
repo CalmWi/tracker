@@ -9,13 +9,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap"
           rel="stylesheet">
-    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../../../styles/style.css">
 </head>
-
-<body>
+<body class="bg-light">
 <header th:insert="header::header"></header>
-<main>
-    <div th:insert="footer::footer"></div>
-</main>
+<div class="container justify-content-center align-items-center">
+    <form th:action="@{/issues/uploadFile/{issueId}(issueId=${issueId})}" enctype="multipart/form-data" method="post">
+        <div class="d-flex flex-column form-group py-4 has-error">
+            <label class="col-form-label">Выберите файл</label>
+            <div class="col-3">
+                <input type="file" class="form-control" name="file">
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+    </form>
+</div>
 </body>
 </html>

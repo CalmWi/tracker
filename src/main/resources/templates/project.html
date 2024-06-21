@@ -1,95 +1,146 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/style.css">
-  <style>
-    .nav-before{}
-    .nav-before::before {
-      position:absolute;
-      height: 2px;
-      width: 100%;
-      background: #e7ebf2;
-      content: "";
-      top: 70px;
-    }
-
-    .a-hover{
-      color: rgba(var(--bs-secondary-rgb), var(--bs-text-opacity));
-    }
-    .a-hover:hover{
-      color: white;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="../styles/style.css">
 </head>
 <body class="bg-light">
 <header th:insert="header::header"></header>
 <div class="d-flex flex-column p-5">
-  <div class="container" th:switch="${project.getIssues()}">
-    <h2 class="text-primary py-4" th:case="null">No orders yet!</h2>
-    <div th:case="*">
-      <h2 class="text-primary py-4">Задачи</h2>
-      <table class="table table-bordered">
-        <thead class="table-info">
-        <tr>
-          <th>#</th>
-          <th>Тип</th>
-          <th>Приоритет</th>
-          <th>Имя</th>
-          <th>Проект</th>
-          <th>Статус</th>
-          <th>Создано</th>
-          <th>Исполнитель</th>
-          <th>Срок исполнения</th>
-          <th>Оценка</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="issue : ${project.getIssues()}">
-          <td th:text="${issue.getId()}"></td>
-          <td th:text="${issue.getType()}"></td>
-          <td th:text="${issue.getPriority()}"></td>
-          <td th:text="${issue.getName()}"></td>
-          <td th:text="${issue.getProject().getName()}"></td>
-          <td th:text="${issue.getStatus()}"></td>
-          <td th:text="${issue.getCreateOn()}"></td>
-          <td th:text="${issue.getAssigned().getName()}"></td>
-          <td th:text="${issue.getDueDate()}"></td>
-          <td th:text="${issue.getEstimatedTime()}"></td>
-        </tr>
-        </tbody>
-      </table>
+    <div class="container d-flex flex-row">
+        <h4 class="col-6" th:text="'Проект:' + ' ' + ${project.getName()}"></h4>
+        <div class="d-flex flex-row justify-content-end col-6">
+            <div sec:authorize="hasAuthority('edit')" class="d-flex">
+                <div class="px-3">
+                    <a class="btn btn-primary" th:href="@{/projects/edit/{id}(id=${project.getId()})}">Редактировать</a>
+                </div>
+            </div>
+            <div sec:authorize="hasAuthority('write')" class="d-flex">
+                <div>
+                    <a class="btn btn-primary" th:href="@{/projects/delete/{id}(id=${project.getId()})}">Удалить</a>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="container" th:switch="${project.getMembers()}">
-    <h2 class="text-primary py-4" th:case="null">No orders yet!</h2>
-    <div th:case="*">
-      <h2 class="text-primary py-4">Участники</h2>
-      <table class="table table-bordered">
-        <thead class="table-info">
-        <tr>
-          <th>Имя</th>
-          <th>Фамилия</th>
-          <th>Роль</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="member : ${project.getMembers()}">
-          <td th:text="${member.getName()}"></td>
-          <td th:text="${member.getSurname()}"></td>
-          <td th:text="${member.getRole()}"></td>
-        </tr>
-        </tbody>
-      </table>
+    <div class="container" th:switch="${project.getIssues().size()}">
+        <div th:case="0">
+            <h4 class="py-4">Задач нет</h4>
+            <div sec:authorize="hasAuthority('member')" class="d-flex justify-content-end">
+                <div class="py-2">
+                    <a class="btn btn-primary"
+                       th:href="@{/projects/add/issue/{projectId}(projectId=${project.getId()})}">Добавить задачу</a>
+                </div>
+            </div>
+        </div>
+        <div th:case="*">
+            <h4 class="py-4">Задачи</h4>
+            <table class="table table-bordered">
+                <thead class="table-info">
+                <tr>
+                    <th>#</th>
+                    <th>Тип</th>
+                    <th>Приоритет</th>
+                    <th>Имя</th>
+                    <th>Проект</th>
+                    <th>Статус</th>
+                    <th>Создано</th>
+                    <th>Исполнитель</th>
+                    <th>Срок исполнения</th>
+                    <th>Оценка</th>
+                    <th>Затраченное время</th>
+                    <th>Оставшееся время</th>
+                    <th sec:authorize="hasAuthority('member')"></th>
+                    <th sec:authorize="hasAuthority('member')"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="issue : ${project.getIssues()}">
+                    <td th:text="${issue.getId()}"></td>
+                    <td th:text="${issue.getType()}"></td>
+                    <td th:text="${issue.getPriority()}"></td>
+                    <td><a style="text-decoration: none;" th:text="${issue.getName()}"
+                           th:href="@{/issues/{id}(id=${issue.getId()})}"></a></td>
+                    <td><a style="text-decoration: none;" th:text="${issue.getProject().getName()}"
+                           th:href="@{/projects/{id}(id=${issue.getProject().getId()})}"></a></td>
+                    <td th:text="${issue.getStatus()}"></td>
+                    <td th:text="${issue.getCreateOn()}"></td>
+                    <td th:text="${issue.getAssigned() != null ? issue.getAssigned().getName() : '' }"></td>
+                    <td th:text="${issue.getDueDate()}"></td>
+                    <td th:text="${issue.getEstimatedTime()}"></td>
+                    <td th:text="${issue.getSpentTime()}"></td>
+                    <td th:text="${issue.getLeftTime()}"></td>
+                    <td sec:authorize="hasAuthority('member')"><a style="text-decoration: none;"
+                                                                  th:href="@{/issues/edit/{id}(id=${issue.getId()})}">Редактировать</a>
+                    </td>
+                    <td sec:authorize="hasAuthority('member')"><a style="text-decoration: none;"
+                                                                  th:href="@{/issues/delete/{id}(id=${issue.getId()})}">Удалить</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div sec:authorize="hasAuthority('member')" class="d-flex justify-content-end">
+                <div class="py-2">
+                    <a class="btn btn-primary"
+                       th:href="@{/projects/add/issue/{projectId}(projectId=${project.getId()})}">Добавить задачу</a>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+    <div class="container" th:switch="${project.getMembers().size()}">
+        <div th:case="0">
+            <h4 class="py-4">Участников нет</h4>
+            <div sec:authorize="hasAuthority('edit')" class="d-flex justify-content-end">
+                <div class="py-2">
+                    <a class="btn btn-primary"
+                       th:href="@{/projects/add/member/{projectId}(projectId=${project.getId()})}">Добавить
+                        пользователя</a>
+                </div>
+            </div>
+        </div>
+        <div th:case="*">
+            <h4 class="py-4">Участники</h4>
+            <table class="table table-bordered">
+                <thead class="table-info">
+                <tr>
+                    <th>Имя</th>
+                    <th>Фамилия</th>
+                    <th>Роль</th>
+                    <th sec:authorize="hasAuthority('write')"></th>
+                    <th sec:authorize="hasAuthority('write')"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="member : ${project.getMembers()}">
+                    <td th:text="${member.getName()}"></td>
+                    <td th:text="${member.getSurname()}"></td>
+                    <td th:text="${member.getRole()}"></td>
+                    <td sec:authorize="hasAuthority('write')"><a style="text-decoration: none;"
+                                                                 th:href="@{/users/edit/{id}(id=${member.getId()})}">Редактировать</a>
+                    </td>
+                    <td sec:authorize="hasAuthority('write')"><a style="text-decoration: none;"
+                                                                 th:href="@{/users/delete/{id}(id=${member.getId()})}">Удалить</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div sec:authorize="hasAuthority('edit')" class="d-flex justify-content-end">
+                <div class="py-2">
+                    <a class="btn btn-primary"
+                       th:href="@{/projects/add/member/{projectId}(projectId=${project.getId()})}">Добавить
+                        пользователя</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div th:insert="subfooter::subfooter"></div>
 <div th:insert="footer::footer"></div>
 </body>
 </html>

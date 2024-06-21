@@ -1,4 +1,24 @@
-*{
-    font-family: "Ubuntu Sans",sans-serif;
-    font-weight: 200;
+* {
+    font-family: "Ubuntu Sans", sans-serif;
+    font-weight: 300;
+}
+
+.nav-before {
+}
+
+.nav-before::before {
+    position: absolute;
+    height: 2px;
+    width: 100%;
+    background: #e7ebf2;
+    content: "";
+    top: 70px;
+}
+
+.a-hover {
+    color: rgba(var(--bs-secondary-rgb), var(--bs-text-opacity));
+}
+
+.a-hover:hover {
+    color: white;
 }

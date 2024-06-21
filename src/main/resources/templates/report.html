@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="../../../styles/style.css">
+</head>
+<body class="bg-light">
+<header th:insert="header::header"></header>
+<div class="d-flex py-5">
+    <div class="container" th:switch="${tasks.size()}">
+        <a class="btn btn-primary" th:href="@{/tasks/report(month=${curMonth - 1},year=${curYear})}">Прошл. месяц</a>
+        <a class="btn btn-primary" th:href="@{/tasks/report(month=${curMonth + 1},year=${curYear})}">След. месяц</a>
+        <h4 class="py-4" th:case="0">Данных нет</h4>
+        <div th:case="*">
+            <h4 class="py-4">Отчет</h4>
+            <table class="table table-bordered">
+                <thead class="table-info">
+                <tr>
+                    <th>Дата</th>
+                    <th>Пользователь</th>
+                    <th>Деятельность</th>
+                    <th>Задача</th>
+                    <th>Комментарий</th>
+                    <th>Часы</th>
+                    <th sec:authorize="hasAuthority('member')"></th>
+                    <th sec:authorize="hasAuthority('member')"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="task : ${tasks}">
+                    <td th:text="${task.getDate()}"></td>
+                    <td th:text="${task.getUserFio()}"></td>
+                    <td th:text="${task.getActivity()}"></td>
+                    <td th:text="${task.getIssue().getName()}"></td>
+                    <td th:text="${task.getComment()}"></td>
+                    <td th:text="${task.getHours()}"></td>
+                    <td sec:authorize="hasAuthority('member')">
+                        <a style="text-decoration: none;"
+                           th:href="@{/tasks/edit/{id}(id=${task.getId()})}">Редактировать</a>
+                    </td>
+                    <td sec:authorize="hasAuthority('member')">
+                        <a style="text-decoration: none;"
+                           th:href="@{/issues/delete/task/{taskId}(taskId=${task.getId()})}">Удалить</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div th:insert="footer::footer"></div>
+</body>
+</html>

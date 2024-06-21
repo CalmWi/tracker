@@ -7,12 +7,19 @@
           integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="../styles/style.css">
 </head>
+<style>
+    * {
+        font-family: "Ubuntu Sans", sans-serif;
+        font-weight: 300;
+    }
+</style>
 <body>
 <main class="d-flex justify-content-center align-items-center"
-      style="background: #808080; background-size: cover; background-repeat: no-repeat; height: 100vh;"/>
+      style="background: #808080;"/>
 <div class="container text-dark">
     <div class="row justify-content-center">
         <div class="col-6">
@@ -24,30 +31,41 @@
                     <div class="d-flex flex-column align-items-start py-3">
                         <div class="d-flex flex-column w-100">
                             <label class="form-label fs-5" style="text-align: left; font-weight: 500">Имя</label>
-                            <input class="form-control fw-light mb-3 px-4 py-3" style="border-radius: 0" type="text" th:field="*{name}"/>
+                            <input class="form-control fw-light mb-3 px-4 py-3" style="border-radius: 0" type="text"
+                                   required th:field="*{name}"/>
                             <p th:each="error: ${#fields.errors('name')}" th:text="${error}">Ошибка валидации</p>
                         </div>
                         <div class="d-flex flex-column w-100">
-                            <label class="form-label fs-5" style="text-align: left; font-weight: 500">Электронная почта</label>
-                            <input class="form-control fw-light mb-3 px-4 py-3" style="border-radius: 0" type="email" th:field="*{email}"/>
+                            <label class="form-label fs-5" style="text-align: left; font-weight: 500">Фамилия</label>
+                            <input class="form-control fw-light mb-3 px-4 py-3" style="border-radius: 0" type="text"
+                                   required th:field="*{surname}"/>
+                            <p th:each="error: ${#fields.errors('surname')}" th:text="${error}">Ошибка валидации</p>
+                        </div>
+                        <div class="d-flex flex-column w-100">
+                            <label class="form-label fs-5" style="text-align: left; font-weight: 500">Электронная
+                                почта</label>
+                            <input class="form-control fw-light mb-3 px-4 py-3" style="border-radius: 0" type="email"
+                                   required th:field="*{email}"/>
                             <p th:each="error : ${#fields.errors('email')}"
                                th:text="${error}">Ошибка валидации</p>
                         </div>
                         <div class="d-flex flex-column w-100">
                             <label class="form-label fs-5" style="text-align: left; font-weight: 500">Пароль</label>
-                            <input class="form-control fw-light mb-3 px-4 py-3" style="border-radius: 0" type="password" th:field="*{password}"/>
+                            <input class="form-control fw-light mb-3 px-4 py-3" style="border-radius: 0" type="password"
+                                   required th:field="*{password}"/>
                             <p th:each="error : ${#fields.errors('password')}"
                                th:text="${error}">Ошибка валидации</p>
                         </div>
                         <div class="d-flex flex-column w-100">
-                            <label class="form-label fs-5" style="text-align: left; font-weight: 500">Повторите пароль</label>
+                            <label class="form-label fs-5" style="text-align: left; font-weight: 500">Повторите
+                                пароль</label>
                             <input class="form-control fw-light mb-3 px-4 py-3" style="border-radius: 0" type="password"
-                                    th:field="*{matchingPassword}"/>
+                                   required th:field="*{matchingPassword}"/>
                         </div>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
                         <p class="mb-0"> Уже есть аккаунт? <a class="link-info text-decoration-none"
-                                                                     th:href="@{/auth/login}">Войти</a> здесь</p>
+                                                              th:href="@{/auth/login}">Войти</a> здесь</p>
                         <button type="submit" class="btn btn-info text-uppercase px-5 py-3" style="border-radius: 0">
                             Зарегистрироваться
                         </button>
